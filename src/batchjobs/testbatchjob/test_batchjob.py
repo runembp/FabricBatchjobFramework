@@ -1,12 +1,12 @@
-from batchjobs.spark.sparkmotor import create_spark_session
-from batchjobs.spark.DataFrameExtensions import optionset_column
+from src.spark.sparkmotor import create_spark_session
+from src.spark.DataFrameExtensions import optionset_column
 
-from entities.Account import Account
-from entities.Police import Police
+from src.entities.Account import Account
+from src.entities.Police import Police
 from pyspark.sql import DataFrame
 
-from src.batchjobs.spark.SparkExtensions import read_csv
-from src.batchjobs.spark.StringEnum import StringEnum
+from src.spark.SparkExtensions import read_csv
+from src.spark.StringEnum import StringEnum
 
 
 class TestBatchjob:
@@ -15,7 +15,7 @@ class TestBatchjob:
         self.spark = spark
 
     def run(self, delimiter=";"):
-        file_location = "src/test.csv"
+        file_location = "data/test.csv"
         dataframe_from_csv = read_csv(self.spark, file_location, delimiter)
         
         dataframe_from_csv.show()

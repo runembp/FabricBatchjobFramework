@@ -1,4 +1,4 @@
-from batchjobs.spark.StringEnum import StringEnum
+from src.spark.StringEnum import StringEnum
 
 
 class Account(StringEnum):
