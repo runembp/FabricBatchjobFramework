@@ -1,5 +1,7 @@
+import functools
+
 from pyspark.sql import DataFrame, functions as F
-from pyspark.sql.functions import regexp_replace, coalesce, create_map, lit, col
+from pyspark.sql.functions import regexp_replace, coalesce, create_map, lit, col, reduce
 
 
 def add_lookup_to(self, target_col):
@@ -73,6 +75,10 @@ def integer_column(self, new_column_name, enum_column):
     return self.withColumn(new_column_name, col(str(enum_column)).cast("integer"))
 
 
+def string_concatenated(self, target_column, source_columns):
+    return self.withColumn(target_column, F.concat_ws("", *[F.col(c) for c in source_columns]))
+
+
 def discard_remaining_columns(self, entity_class):
     action_column = "Action"
     entity_fields = {str(e.value).lower() for e in entity_class}
@@ -83,10 +89,29 @@ def discard_remaining_columns(self, entity_class):
     return self.select(*to_select)
 
 
+def validate_required_columns(self, required_column_list):
+    if not required_column_list:
+        return self
+
+    conditions = [
+        (F.col(c).isNotNull()) & (F.trim(F.col(c)) != "")
+        for c in required_column_list
+    ]
+
+    combined_condition = functools.reduce(lambda x, y: x & y, conditions)
+
+    return self.withColumn("VALID",
+                           F.when(combined_condition, "VALID")
+                           .otherwise(None)
+                           )
+
+
 DataFrame.string = string_column
 DataFrame.decimal = decimal_column
 DataFrame.optionset_column = optionset_column
 DataFrame.optionset = optionset
 DataFrame.integer = integer_column
+DataFrame.string_concatenated = string_concatenated
 DataFrame.add_lookup_to = add_lookup_to
 DataFrame.discard_remaining_columns = discard_remaining_columns
+DataFrame.validate_required_columns = validate_required_columns

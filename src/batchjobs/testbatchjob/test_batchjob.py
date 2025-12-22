@@ -1,10 +1,9 @@
-from src.spark.sparkmotor import create_spark_session
-from src.spark.DataFrameExtensions import optionset_column
+from pyspark.sql import DataFrame
 
 from src.entities.Account import Account
 from src.entities.Police import Police
-from pyspark.sql import DataFrame
 
+from src.spark.DataFrameExtensions import optionset_column
 from src.spark.SparkExtensions import read_csv
 from src.spark.StringEnum import StringEnum
 
@@ -15,12 +14,12 @@ class TestBatchjob:
         self.spark = spark
 
     def run(self, delimiter=";"):
+        batchjob_id = "001"
         file_location = "data/test.csv"
-        dataframe_from_csv = read_csv(self.spark, file_location, delimiter)
-        
-        dataframe_from_csv.show()
+        dataframe_from_csv = self.spark.read_csv(file_location, delimiter)
 
         dataframe_transformed = dataframe_from_csv \
+            .string_concatenated(Account.batch_noegle, [TestBatchjobMap.POLICE_NUMMER, TestBatchjobMap.ID]) \
             .string(TestBatchjobMap.ACTION, TestBatchjobMap.ACTION) \
             .string(Account.status, TestBatchjobMap.STATUS) \
             .decimal(Account.loen, TestBatchjobMap.SALARY) \
@@ -34,9 +33,9 @@ class TestBatchjob:
             .where_values_in(TestBatchjobMap.POLICE_NUMMER) \
             .execute()
 
-        dataframe_transformed = dataframe_transformed.discard_remaining_columns(Account)
-
-        dataframe_transformed.show()
+        required_columns = [Account.police_nummer, Account.account_number]
+        self.spark.prepare_transformed_table(batchjob_id, dataframe_transformed, required_columns)
+        self.spark.prepare_ingest_table(batchjob_id, Account)
 
 
 class TestBatchjobMap(StringEnum):
