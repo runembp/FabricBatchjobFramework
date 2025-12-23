@@ -30,8 +30,7 @@ class TestBatchjob:
             .add_lookup_to(Account.police_nummer) \
             .from_table(Police.logical_name) \
             .to_column(Police.police_nummer) \
-            .where_values_in(TestBatchjobMap.POLICE_NUMMER) \
-            .execute()
+            .where_values_in(TestBatchjobMap.POLICE_NUMMER)
 
         required_columns = [Account.police_nummer, Account.account_number]
         self.spark.prepare_transformed_table(batchjob_id, dataframe_transformed, required_columns)
