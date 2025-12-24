@@ -1,0 +1,21 @@
+[project]
+name = "fabric-d365-batch-framework"
+version = "0.1.0.0"
+dependencies = [
+    "requests",
+    "azure-identity",
+    "pyspark",
+    "delta-spark"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "build", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools_scm]

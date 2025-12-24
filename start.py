@@ -1,5 +1,5 @@
-from src.batchjobs.testbatchjob.test_batchjob import TestBatchjob
-from src.spark.sparkmotor import create_spark_session
+from src.fabric_framework.batchjobs.testbatchjob.test_batchjob import TestBatchjob
+from src.fabric_framework.utils.spark_motor import create_spark_session
 from tests.Harness import seed_fake_lakehouse
 from tests.NotebookMock import MockNotebookUtils
 
@@ -17,6 +17,6 @@ if __name__ == "__main__":
 
     transformed_results = spark.table("001_transformed")
     final_results = spark.table("001_ingest")
-    
+
     transformed_results.show()
     final_results.show()

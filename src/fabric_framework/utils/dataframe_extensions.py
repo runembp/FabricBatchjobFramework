@@ -3,7 +3,7 @@ import functools
 from pyspark.sql import DataFrame, functions as F
 from pyspark.sql.functions import regexp_replace, coalesce, create_map, lit, col
 
-from src.spark.LookupBuilder import LookupBuilder
+from src.fabric_framework.utils.lookup_builder import LookupBuilder
 
 
 def add_lookup_to(self, target_col):

@@ -1,5 +1,6 @@
 from pyspark.sql import DataFrame, functions as F
 
+
 class LookupBuilder:
     def __init__(self, df: DataFrame, target_col):
         self._df = df

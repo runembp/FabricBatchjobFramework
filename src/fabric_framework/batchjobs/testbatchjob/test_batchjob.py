@@ -1,11 +1,11 @@
 from pyspark.sql import DataFrame
 
-from src.entities.Account import Account
-from src.entities.Police import Police
+from src.fabric_framework.dataverse_entities.Account import Account
+from src.fabric_framework.dataverse_entities.Police import Police
 
-from src.spark.DataFrameExtensions import optionset_column
-from src.spark.SparkExtensions import read_csv
-from src.spark.StringEnum import StringEnum
+from src.fabric_framework.utils.dataframe_extensions import optionset_column
+from src.fabric_framework.utils.spark_extensions import read_csv
+from src.fabric_framework.utils.enums import StringEnum
 
 
 class TestBatchjob:

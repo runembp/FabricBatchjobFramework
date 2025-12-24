@@ -1,4 +1,4 @@
-from src.spark.StringEnum import StringEnum
+from src.fabric_framework.utils.enums import StringEnum
 
 
 class Account(StringEnum):
