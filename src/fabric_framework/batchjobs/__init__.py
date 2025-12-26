@@ -1,5 +1,5 @@
-from .testbatchjob.test_batchjob import TestBatchjob
+from .runner.runner import Runner
 
 __all__ = [
-    "TestBatchJob"
+    "Runner"
 ]

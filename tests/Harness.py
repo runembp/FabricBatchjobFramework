@@ -18,4 +18,5 @@ def spark_session():
              .getOrCreate())
 
     seed_fake_lakehouse(spark)
+    
     return spark

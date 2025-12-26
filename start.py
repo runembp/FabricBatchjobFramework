@@ -1,4 +1,4 @@
-from src.fabric_framework.batchjobs.testbatchjob.test_batchjob import TestBatchjob
+from src.fabric_framework.batchjobs.runner.runner import Runner
 from src.fabric_framework.utils.spark_motor import create_spark_session
 from tests.Harness import seed_fake_lakehouse
 from tests.NotebookMock import MockNotebookUtils
@@ -6,7 +6,7 @@ from tests.NotebookMock import MockNotebookUtils
 
 def test_batchjob_locally(spark_session):
     mock_utils = MockNotebookUtils()
-    job = TestBatchjob(notebookutils=mock_utils, spark=spark_session)
+    job = Runner(notebookutils=mock_utils, spark=spark_session)
     job.run()
 
 
