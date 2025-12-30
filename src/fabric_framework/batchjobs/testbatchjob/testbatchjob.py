@@ -6,11 +6,11 @@ from src.fabric_framework.utils.enums import StringEnum
 from pyspark.sql import DataFrame
 
 
-class TestBatchjobMap(StringEnum):
+class TestBatchjob:
     batchjob_id = "001"
     entity_class = Account
     required_columns = [Account.police_nummer, Account.account_number]
-
+    
     def map_csv_file(self, batchjob_id, delimiter=";") -> DataFrame:
         dataframe = self.spark.read_csv(batchjob_id, delimiter)
 
@@ -22,8 +22,10 @@ class TestBatchjobMap(StringEnum):
             .string_concatenated(Account.batch_noegle, [TestBatchJobColumns.POLICE_NUMMER, TestBatchJobColumns.ID]) \
             .string(Account.status, TestBatchJobColumns.STATUS) \
             .decimal(Account.loen, TestBatchJobColumns.SALARY) \
-            .optionset(Account.value, TestBatchjobMap.value_optionset_converter) \
+            .optionset(Account.value, TestBatchjob.value_optionset_converter) \
             .integer(Account.account_number, TestBatchJobColumns.ID)
+
+        dataframe_transformed.show()
 
         return dataframe_transformed
 

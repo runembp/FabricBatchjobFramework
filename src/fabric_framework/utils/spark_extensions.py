@@ -6,13 +6,15 @@ def read_csv(self, batchjob_id, path, delimiter=";"):
     """
     Standardized CSV reader for BatchJobs.
     """
+    
+    #TODO Remove this hardcoded path
     csv_path = f"data/test.csv"
 
     dataframe = self.read \
         .option("header", "true") \
         .option("inferSchema", "true") \
         .option("sep", delimiter) \
-        .csv(path)
+        .csv(csv_path)
 
     if dataframe is not None and len(dataframe.columns) > 0:
         return dataframe
@@ -26,19 +28,30 @@ def read_csv(self, batchjob_id, path, delimiter=";"):
 
 
 def increment_retry_count_on_failed_records(self, batchjob_id: str):
-    try:
-        failed_df = self.table(f"{batchjob_id}_ingest") \
-            .filter("VALID = 'INVALID'") \
-            .withColumn("retry_count", F.col("retry_count") + 1)
+    transformed_table = f"{batchjob_id}_transformed"
 
-        failed_df.createOrReplaceTempView(f"{batchjob_id}_ingest")
+    table_names = [t.name.lower() for t in self.catalog.listTables()]
+
+    if transformed_table not in table_names:
+        print(f"Table '{transformed_table}' not found. Skipping.")
+        return
+    
+    transformed = self.read.table(transformed_table)
+
+    if transformed is None:
+        print(f"Table '{transformed_table}' is empty. No records to update.")
+        return
+
+    try:
+        self.sql(f"UPDATE {transformed_table} SET retry_count = retry_count + 1")
     except Exception as e:
-        raise e
+        print(f"Failed to update {transformed_table}: {str(e)}")
 
 
 def prepare_transformed_table(self, batchjob_id: str, dataframe):
     if dataframe is None:
         return None
+    
 
     dataframe_transformed = dataframe.withColumn("retry_count", F.lit(None).cast(IntegerType()))
     dataframe_transformed.createOrReplaceTempView(f"{batchjob_id}_transformed")
